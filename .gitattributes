@@ -1,0 +1,1 @@
+data/integrated_paralogs_methods.tsv filter=lfs diff=lfs merge=lfs -text
