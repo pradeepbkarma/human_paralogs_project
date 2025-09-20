@@ -12,3 +12,5 @@ annotated reference protein.
 
 reproduce the virtual environment as 
 conda create -f human_paralogs_environment.yml
+
+Follow the FoldMason github page to install the tool @ https://github.com/steineggerlab/foldmason 
