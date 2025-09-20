@@ -1,0 +1,54 @@
+import requests 
+from Bio import pairwise2
+from Bio.Align import substitution_matrices
+from itertools import combinations
+
+# function to fetch active site information from InterPro
+def fetch_active_sites(uniprot_ids):
+    active_sites = []
+    # base_url = "https://www.ebi.ac.uk/interpro/api/protein/UniProt/"
+    
+
+    for uniprot_id in uniprot_ids:
+        # response = requests.get(base_url + uniprot_id)
+        response = requests.get(f"https://www.ebi.ac.uk/interpro/protein/UniProt/{uniprot_id}")
+        if response.status_code == 200:
+            data = response.json()
+            features = data.get("features, []")
+            for feature in features:
+                if feature.get("type") == "active site":
+                    # Append all active sites entries for the same Uniprot ID
+                    active_sites.append({
+                        "UniProt ID": uniprot_id,
+                        "Active Site Description": feature.get("description"),
+                        "Start": feature.get("location", {}).get("start"),
+                        "End": feature.get("location", {}).get("end")
+                    })
+        else:
+            print(f"failed to fetch active sites for {uniprot_id}: {response.status_code}")
+
+    return active_sites
+
+def get_sequence_sim_percent(seq1, seq2):
+    matrix = substitution_matrices.load("BLOSUM62")
+    align = pairwise2.align.globalds(seq1, seq2, matrix, -10, -0.5, one_alignment_only=True)
+    
+    aligned_seq1 = align[0].seqA
+    aligned_seq2 = align[0].seqB
+    
+    similar = 0
+    aligned_len = 0
+    for a, b in zip(aligned_seq1, aligned_seq2):
+        if a == '-' or b =='-':
+            continue
+        aligned_len += 1
+        try:
+            if matrix[a][b] > 0:
+                similar += 1
+        except KeyError:
+            continue
+            
+    return (similar/aligned_len)*100 if aligned_len >0 else 0  
+
+
+

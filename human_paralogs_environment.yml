@@ -1,0 +1,16 @@
+name: 
+channels:
+- conda-forge
+dependencies:
+- biopython
+- ipykernel
+- matplotlib
+- networkx
+- numpy
+- pandas
+- python=3.9.13
+- python-louvain
+- requests
+- scikit-learn
+- seaborn
+
